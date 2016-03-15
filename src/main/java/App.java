@@ -11,9 +11,11 @@ public class App {
 
     private final static String DAY = "DAY";
     private final static String NIGHT = "NIGHT";
+    private final static int X = 300;
+    private final static int Y = 600;
 
     private static ArrayList<Double> nightValues, dayValues;
-    private static Double nightMean, dayMean, dayDispersion, nightDispersion;
+    private static Double nightMean, dayMean, dayVariance, nightVariance;
 
     public static void main(String[] args) {
         System.out.println("Welcome to OpenCV " + Core.VERSION);
@@ -30,11 +32,22 @@ public class App {
         System.out.println(nightMean);
         System.out.println(dayMean);
 
-        dayDispersion = calculateDispersion(dayValues, dayMean);
-        nightDispersion = calculateDispersion(nightValues, nightMean);
+        dayVariance = calculateVariance(dayValues, dayMean);
+        nightVariance = calculateVariance(nightValues, nightMean);
 
-        System.out.println(dayDispersion);
-        System.out.println(nightDispersion);
+        System.out.println(dayVariance);
+        System.out.println(nightVariance);
+
+        Mat image = Highgui.imread("src/main/resources/night/n7.jpg", Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+        Double x = 0.0;
+        for (Double d : image.get(X, Y)) {
+            x = d;
+        }
+
+        Double nightGaussian = calculateGaussian(x, dayMean, dayVariance);
+        Double dayGaussian = calculateGaussian(x, nightMean, nightVariance);
+
+        System.out.println(nightGaussian > dayGaussian ? "\nNIGHT" : "\nDAY");
 
     }
 
@@ -51,7 +64,7 @@ public class App {
 
         for (int i = 1; i <= 10; i++) {
             Mat image = Highgui.imread("src/main/resources/" + path + i + ".jpg", Highgui.CV_LOAD_IMAGE_GRAYSCALE);
-            for (Double d : image.get(300,600)) {
+            for (Double d : image.get(X, Y)) {
                 array.add(d);
                 System.out.println(d);
             }
@@ -67,12 +80,16 @@ public class App {
         return average / list.size();
     }
     
-    private static Double calculateDispersion(ArrayList<Double> list, Double mean) {
-        Double dispersion = 0.0;
+    private static Double calculateVariance(ArrayList<Double> list, Double mean) {
+        Double Variance = 0.0;
         for (Double v : list) {
-            dispersion = dispersion + Math.pow(mean - v, 2);
+            Variance = Variance + Math.pow(mean - v, 2);
         }
 
-        return dispersion / list.size();
+        return Variance / list.size();
+    }
+
+    private static double calculateGaussian(Double x, Double mean, double variance) {
+        return 1 / (variance * Math.sqrt(2 * Math.PI)) * Math.pow(Math.E, (- 1/2) * Math.pow((x - mean)/variance, 2));
     }
 }
