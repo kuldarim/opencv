@@ -57,7 +57,7 @@ public class MyFrame extends JFrame {
     public void paint(Graphics g) {
 //        g = contentPane.getGraphics();
 //        g.drawImage(videoCap.getOneFrame(), 0, 0, this);
-//        Highgui.imwrite("src/main/resources/1.jpg", videoCap.getMat());
+//        Highgui.imwrite("src/main/resources/source.jpg", videoCap.getMat());
 //        MatOfRect faceDetections = new MatOfRect();
 //
 //        faceDetector.detectMultiScale(videoCap.getMat(), faceDetections);
