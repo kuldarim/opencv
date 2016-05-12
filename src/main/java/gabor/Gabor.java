@@ -1,11 +1,9 @@
 package gabor;
 
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Size;
+import org.opencv.core.*;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +22,8 @@ public class Gabor {
 
             Mat image1 = Highgui.imread("src/main/resources/gabor/f1.jpg", Highgui.CV_LOAD_IMAGE_GRAYSCALE);
             Mat image2 = Highgui.imread("src/main/resources/gabor/f4.jpg", Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+
+            detectFace(image1);
 
             Imgproc.resize(image1, image1, new Size(240.0, 240.0));
             Imgproc.resize(image2, image2, new Size(240.0, 240.0));
@@ -104,5 +104,19 @@ public class Gabor {
         }
 
         return mat;
+    }
+
+    private static void detectFace (Mat img) {
+        CascadeClassifier faceDetector = new CascadeClassifier("src/main/resources/haars/haarcascade_frontalface_default.xml");
+
+        System.out.println(faceDetector.empty());
+        MatOfRect faceDetections = new MatOfRect();
+        faceDetector.detectMultiScale(img, faceDetections);
+        for (Rect rect : faceDetections.toArray()) {
+            System.out.println("ttt");
+            System.out.println(rect.x);
+            System.out.println(rect.y);
+        }
+
     }
 }

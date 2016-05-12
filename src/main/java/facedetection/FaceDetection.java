@@ -30,12 +30,7 @@ public class FaceDetection extends javax.swing.JFrame {
     VideoCapture webSource = null;
     Mat frame = new Mat();
     MatOfByte mem = new MatOfByte();
-    CascadeClassifier faceDetector = new CascadeClassifier(
-            FaceDetection
-                    .class
-                    .getResource("/haars/lbpcascade_frontalface.xml")
-                            .getPath()
-                            .substring(1));
+    CascadeClassifier faceDetector = new CascadeClassifier("src/main/resources/haars/haarcascade_frontalface_default.xml");
     MatOfRect faceDetections = new MatOfRect();
 ///
 
