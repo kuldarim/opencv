@@ -18,8 +18,8 @@ public class Gabor {
         try {
             System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
             // read images
-            Mat image1 = Highgui.imread("src/main/resources/gabor/p1/p3.jpg", Highgui.CV_LOAD_IMAGE_GRAYSCALE);
-            Mat image2 = Highgui.imread("src/main/resources/gabor/p1/p7.jpg", Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+            Mat image1 = Highgui.imread("src/main/resources/gabor/p7/p2.jpg", Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+            Mat image2 = Highgui.imread("src/main/resources/gabor/p7/p3.jpg", Highgui.CV_LOAD_IMAGE_GRAYSCALE);
             // detect images
             compareTwoImages(image1, image2);
 //            detectFace(image2);
@@ -71,7 +71,7 @@ public class Gabor {
         Size kSize = new Size(5, 5);
 
         double sigma = 20;
-        double gamma = 0.7;
+        double gamma = 0.5;
         double psi =  0;
 
         for (Double theta: thetas) {
@@ -101,16 +101,7 @@ public class Gabor {
 
     private static Mat createFeatureMat(ArrayList<Mat> gabors) {
         // downsampling 40 points 8 * 5
-        List<Integer> xes = Arrays.asList(
-                0, 1, 5, 8, 13, 17, 30,
-                33, 46, 48, 57, 60, 67,
-                69, 81, 85, 86, 88, 90,
-                91, 94, 97, 101, 105,
-                120, 122, 134, 145,
-                150, 155, 161, 171,
-                180, 185, 191, 201,
-                210, 222, 232, 239
-        );
+        List<Integer> xes = Arrays.asList(0, 30, 60, 90, 120, 150, 180, 210, 239);
         List<Integer> yks = Arrays.asList(0, 48, 96, 146, 192, 239);
 
         Mat mat = new Mat(40, 40, CvType.CV_8UC1);
