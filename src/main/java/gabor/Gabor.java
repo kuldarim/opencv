@@ -20,10 +20,13 @@ public class Gabor {
         try {
             System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
 
-            Imgproc.resize();
 
-            Mat image1 = Highgui.imread("src/main/resources/gabor/1.jpg", Highgui.CV_LOAD_IMAGE_GRAYSCALE);
-            Mat image2 = Highgui.imread("src/main/resources/gabor/2.jpg", Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+
+            Mat image1 = Highgui.imread("src/main/resources/gabor/f1.jpg", Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+            Mat image2 = Highgui.imread("src/main/resources/gabor/f4.jpg", Highgui.CV_LOAD_IMAGE_GRAYSCALE);
+
+            Imgproc.resize(image1, image1, new Size(240.0, 240.0));
+            Imgproc.resize(image2, image2, new Size(240.0, 240.0));
 
             ArrayList<Mat> gabors1 = createGaborMats(image1);
             ArrayList<Mat> gabors2 = createGaborMats(image2);
@@ -31,9 +34,10 @@ public class Gabor {
             Mat mat1 = createFeatureMat(gabors1);
             Mat mat2 = createFeatureMat(gabors2);
 
-           // Highgui.imwrite("src/main/resources/gabor/x.jpg", mat1);
+            Highgui.imwrite("src/main/resources/gabor/x1.jpg", mat1);
+            Highgui.imwrite("src/main/resources/gabor/x2.jpg", mat2);
 
-            System.out.println(Core.norm(mat1, mat2));
+            System.out.println(Core.norm(mat1, mat2, Core.NORM_L2));
 
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
@@ -46,11 +50,11 @@ public class Gabor {
         //predefine parameters for Gabor kernel
         List<Double> thetas = Arrays.asList(0.0, 23.0, 45.0, 68.0, 90.0, 113.0, 135.0, 158.0);
         List<Double> lambdas = Arrays.asList(3.0, 6.0, 13.0, 28.0, 58.0);
-        Size kSize = new Size(10, 10);
+        Size kSize = new Size(2, 2);
 
         double sigma = 20;
         double gamma = 0.5;
-        double psi =  0;
+        double psi =  Math.PI / 2;
 
         for (Double theta: thetas) {
             for (Double lambda: lambdas) {
@@ -87,7 +91,7 @@ public class Gabor {
 
         for (int i = 0; i < gabors.size(); i++) {
             Mat gabor = gabors.get(i);
-         //   Highgui.imwrite("src/main/resources/gabor/result" + (i + 1) + ".jpg", gabor);
+            Highgui.imwrite("src/main/resources/gabor/result" + (i + 1) + ".jpg", gabor);
 
             int matY = 0;
             for (Integer x : xes) {
