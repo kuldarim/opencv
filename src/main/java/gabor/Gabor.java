@@ -112,10 +112,10 @@ public class Gabor {
         System.out.println(faceDetector.empty());
         MatOfRect faceDetections = new MatOfRect();
         faceDetector.detectMultiScale(img, faceDetections);
+
         for (Rect rect : faceDetections.toArray()) {
-            System.out.println("ttt");
-            System.out.println(rect.x);
-            System.out.println(rect.y);
+            Mat cropped = new Mat(img, rect);
+            Highgui.imwrite("src/main/resources/gabor/cropped.jpg", cropped);
         }
 
     }
