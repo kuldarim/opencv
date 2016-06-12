@@ -5,6 +5,7 @@ import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,33 +18,88 @@ public class Gabor {
 
         try {
             System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
-            // read images
-            Mat image1 = Highgui.imread("src/main/resources/gabor/p7/p2.jpg", Highgui.CV_LOAD_IMAGE_GRAYSCALE);
-            Mat image2 = Highgui.imread("src/main/resources/gabor/p7/p3.jpg", Highgui.CV_LOAD_IMAGE_GRAYSCALE);
             // detect images
-            compareTwoImages(image1, image2);
-//            detectFace(image2);
-//            // resize to make all the same size
-//            Imgproc.resize(image1, image1, new Size(240.0, 240.0));
-//            Imgproc.resize(image2, image2, new Size(240.0, 240.0));
-//            // create gabor filters
-//            ArrayList<Mat> gabors1 = createGaborMats(image1);
-//            ArrayList<Mat> gabors2 = createGaborMats(image2);
-//            // create feature mats
-//            Mat mat1 = createFeatureMat(gabors1);
-//            Mat mat2 = createFeatureMat(gabors2);
+            List<Mat> p2 = getImageMats("p2");
+            List<Mat> p3 = getImageMats("p3");
+            List<Mat> p4 = getImageMats("p4");
+            List<Mat> p5 = getImageMats("p5");
+            List<Mat> p6 = getImageMats("p6");
+            List<Mat> p7 = getImageMats("p7");
+
+
+//            getStatistics(compareSamePerson6ImagesEach("p2", p2));
+//            getStatistics(compareSamePerson6ImagesEach("p3", p3));
+//            getStatistics(compareSamePerson6ImagesEach("p4", p4));
+//            getStatistics(compareSamePerson6ImagesEach("p5", p5));
+//            getStatistics(compareSamePerson6ImagesEach("p6", p6));
+//            getStatistics(compareSamePerson6ImagesEach("p7", p7));
+
+//            getStatistics(compareTwoPersonsMats("p2", p2, "p3", p3));
+//            getStatistics(compareTwoPersonsMats("p2", p2, "p4", p4));
+//            getStatistics(compareTwoPersonsMats("p2", p2, "p5", p5));
+//            getStatistics(compareTwoPersonsMats("p2", p2, "p6", p6));
+//            getStatistics(compareTwoPersonsMats("p2", p2, "p7", p7));
 //
-//            // Highgui.imwrite("src/main/resources/gabor/x1.jpg", mat1);
-//            // Highgui.imwrite("src/main/resources/gabor/x2.jpg", mat2);
-//            //calculate the distance between matrices
-           // System.out.println(Core.norm(mat1, mat2, Core.NORM_L2));
+//            getStatistics(compareTwoPersonsMats("p3", p3, "p4", p4));
+//            getStatistics(compareTwoPersonsMats("p3", p3, "p5", p5));
+//            getStatistics(compareTwoPersonsMats("p3", p3, "p6", p6));
+//            getStatistics(compareTwoPersonsMats("p3", p3, "p7", p7));
+//
+//            getStatistics(compareTwoPersonsMats("p4", p4, "p5", p5));
+//            getStatistics(compareTwoPersonsMats("p4", p4, "p6", p6));
+//            getStatistics(compareTwoPersonsMats("p4", p4, "p7", p7));
+//
+//            getStatistics(compareTwoPersonsMats("p5", p5, "p6", p6));
+//            getStatistics(compareTwoPersonsMats("p5", p5, "p7", p7));
+
+            getStatistics(compareTwoPersonsMats("p3", p3, "p2", p2));
 
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
 
-    private static void compareTwoImages(Mat image1, Mat image2) {
+    private static List<Double> compareTwoPersonsMats(String name1, List<Mat> images1, String name2, List<Mat> images2) {
+        List<Double> norms = new ArrayList<Double>();
+        for (Mat img1 : images1) {
+            for (Mat img2 : images2) {
+                Double norm = compareTwoImages(img1, img2);
+                if (!norm.equals(0.0)) {
+                    System.out.println(name1 + name2 + " " + norm);
+                    norms.add(norm);
+                }
+            }
+        }
+
+        return norms;
+    }
+
+    private static List<Double> compareSamePerson6ImagesEach(String name, List<Mat> images) {
+        List<Double> norms = new ArrayList<Double>();
+        for (Mat img1 : images) {
+            for (Mat img2 : images) {
+                Double norm = compareTwoImages(img1, img2);
+                if (!norm.equals(0.0)) {
+                    System.out.println(name + " " + norm);
+                    norms.add(norm);
+                }
+            }
+        }
+
+        return norms;
+    }
+
+    private static List<Mat> getImageMats(String folderName) {
+        List<Mat> images = new ArrayList<Mat>();
+        for (int i = 1; i < 8; i++) {
+            String path = "src/main/resources/gabor/" + folderName + "/p" + i + ".jpg";
+            images.add(Highgui.imread(path, Highgui.CV_LOAD_IMAGE_GRAYSCALE));
+        }
+
+        return images;
+    }
+
+    private static Double compareTwoImages(Mat image1, Mat image2) {
         Mat face1 = detectFace(image1, "img1");
         Mat face2 = detectFace(image2, "img2");
         // resize to make all the same size
@@ -59,7 +115,7 @@ public class Gabor {
          Highgui.imwrite("src/main/resources/gabor/x1.jpg", mat1);
          Highgui.imwrite("src/main/resources/gabor/x2.jpg", mat2);
         //calculate the distance between matrices
-        System.out.println(Core.norm(mat1, mat2, Core.NORM_L2));
+        return Core.norm(mat1, mat2, Core.NORM_L2);
     }
 
     private static ArrayList<Mat> createGaborMats(Mat image) {
@@ -133,5 +189,11 @@ public class Gabor {
         Mat cropped = new Mat(img, faceDetections.toArray()[0]);
         Highgui.imwrite("src/main/resources/gabor/cropped/" + filename + ".jpg", cropped);
         return img;
+    }
+
+    private static void getStatistics(List<Double> list) {
+        System.out.println("Average: " + list.stream().mapToDouble(d -> d).average().getAsDouble());
+        System.out.println("Max: " + list.stream().max((d1, d2) -> Double.compare(d1, d2)).get());
+        System.out.println("Min: " + list.stream().min((d1, d2) -> Double.compare(d1, d2)).get());
     }
 }
